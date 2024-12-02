@@ -48,20 +48,20 @@ func parseObj(ps *parseStream) error {
 			}
 			break
 		}
-		err = parseKeyValue(ps)
-		if err != nil {
+		if err := parseKeyValue(ps); err != nil {
 			return err
 		}
 		tok, err = ps.peek()
 		if err != nil {
 			return err
 		}
-		if tok.k == Comma {
+		switch tok.k {
+		case Comma:
 			expectKeyValue = true
 			ps.next()
-		} else if tok.k == RightBracket {
+		case RightBracket:
 			expectKeyValue = false
-		} else {
+		default:
 			return errUnexpectedTok
 		}
 	}
@@ -72,16 +72,13 @@ func parseObj(ps *parseStream) error {
 }
 
 func parseKeyValue(ps *parseStream) error {
-	_, err := ps.expect(String)
-	if err != nil {
+	if _, err := ps.expect(String); err != nil {
 		return err
 	}
-	_, err = ps.expect(Colon)
-	if err != nil {
+	if _, err := ps.expect(Colon); err != nil {
 		return err
 	}
-	err = parseExpr(ps)
-	if err != nil {
+	if err := parseExpr(ps); err != nil {
 		return err
 	}
 	return nil
@@ -103,20 +100,20 @@ func parseArr(ps *parseStream) error {
 			}
 			break
 		}
-		err = parseExpr(ps)
-		if err != nil {
+		if err := parseExpr(ps); err != nil {
 			return err
 		}
 		tok, err = ps.peek()
 		if err != nil {
 			return err
 		}
-		if tok.k == Comma {
+		switch tok.k {
+		case Comma:
 			expectKeyValue = true
 			ps.next()
-		} else if tok.k == RightBrace {
+		case RightBrace:
 			expectKeyValue = false
-		} else {
+		default:
 			return errUnexpectedTok
 		}
 	}
