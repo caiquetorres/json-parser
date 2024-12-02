@@ -76,6 +76,8 @@ func (t *tokenStream) get() (token, error) {
 	}
 	if unicode.IsLetter(rune(ch)) {
 		return t.tokKeyword(ch)
+	} else if ch == '-' || unicode.IsNumber(rune(ch)) {
+		return t.tokNumber(ch)
 	}
 	return token{}, errBad
 }
@@ -146,6 +148,80 @@ func (t *tokenStream) tokString() (token, error) {
 		return token{}, errBad
 	}
 	return t.newToken(String), nil
+}
+
+func (t *tokenStream) tokNumber(firstCh byte) (token, error) {
+	ch := firstCh
+	if ch == '-' {
+		var err error
+		ch, err = t.nextByte() // '-'
+		if err != nil {
+			return token{}, nil
+		}
+	}
+	if ch == '0' {
+		ch, err := t.peekByte()
+		if err != nil {
+			return token{}, errBad
+		}
+		if ch != '.' {
+			return token{}, errBad
+		}
+	}
+	for {
+		ch, err := t.peekByte()
+		if err != nil || !unicode.IsDigit(rune(ch)) {
+			break
+		}
+		t.nextByte() // digit
+	}
+	ch, err := t.peekByte()
+	if err != nil {
+		return t.newToken(Number), nil
+	}
+	if ch == '.' {
+		t.nextByte() // '.'
+		ch, err := t.peekByte()
+		if err != nil || !unicode.IsNumber(rune(ch)) {
+			return token{}, errBad
+		}
+		for {
+			ch, err := t.peekByte()
+			if err != nil || !unicode.IsDigit(rune(ch)) {
+				break
+			}
+			t.nextByte() // digit
+		}
+	}
+	ch, err = t.peekByte()
+	if err != nil {
+		return t.newToken(Number), nil
+	}
+	if ch == 'e' || ch == 'E' {
+		t.nextByte() // 'e' or 'E'
+		ch, err := t.peekByte()
+		if err != nil {
+			return token{}, errBad
+		}
+		if ch == '+' || ch == '-' {
+			t.nextByte() // '+' or '-'
+		}
+		ch, err = t.peekByte()
+		if err != nil {
+			return token{}, errBad
+		}
+		if !unicode.IsNumber(rune(ch)) {
+			return token{}, errBad
+		}
+		for {
+			ch, err := t.peekByte()
+			if err != nil || !unicode.IsDigit(rune(ch)) {
+				break
+			}
+			t.nextByte() // digit
+		}
+	}
+	return t.newToken(Number), nil
 }
 
 func isEscapingChar(ch byte) bool {

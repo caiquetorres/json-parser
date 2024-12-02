@@ -42,6 +42,8 @@ func (k tokenKind) String() string {
 		return "bool"
 	case String:
 		return "string"
+	case Number:
+		return "number"
 	default:
 		return "unknown"
 	}
