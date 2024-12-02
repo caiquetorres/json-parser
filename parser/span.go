@@ -1,6 +1,8 @@
 package jsonparser
 
-import "io"
+import (
+	"io"
+)
 
 type span struct {
 	s uint32
@@ -21,7 +23,7 @@ func (s *span) len() uint16 {
 
 func (s *span) textContent(r io.ReadSeeker) (string, error) {
 	buf := make([]byte, s.l)
-	_, err := r.Seek(int64(s.s), int(s.l))
+	_, err := r.Seek(int64(s.s), io.SeekStart)
 	if err != nil {
 		return "", err
 	}
