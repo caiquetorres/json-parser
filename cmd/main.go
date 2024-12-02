@@ -1,7 +1,19 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
+
+	jsonparser "github.com/caiquetorres/json-parser/parser"
+)
 
 func main() {
-	fmt.Println("Hello World!")
+	file, err := os.Open("test.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = jsonparser.Run(file)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
