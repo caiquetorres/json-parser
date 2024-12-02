@@ -54,20 +54,17 @@ func TestTokenStream_InvalidCharacter(t *testing.T) {
 }
 
 func TestTokenStream_TokString_ValidStrings(t *testing.T) {
-	tests := []struct {
-		input    string
-		expected string
-	}{
-		{`"hello"`, "hello"},
-		{`"hello world"`, "hello world"},
-		{`"with \\ backslash"`, `with \\ backslash`},
-		{`"with \" escaped quotes"`, `with \" escaped quotes`},
-		{`"new\nline"`, `new\nline`},
-		{`"unicode \u1234 sequence"`, `unicode \u1234 sequence`},
-		{`""`, ""},
+	tests := []string{
+		`"hello"`,
+		`"hello world"`,
+		`"with \\ backslash"`,
+		`"with \" escaped quotes"`,
+		`"new\nline"`,
+		`"unicode \u1234 sequence"`,
+		`""`,
 	}
-	for _, test := range tests {
-		r := strings.NewReader(test.input)
+	for _, input := range tests {
+		r := strings.NewReader(input)
 		ts := newTokenStream(r)
 		tok, err := ts.next()
 		assert.NoError(t, err)
@@ -95,17 +92,14 @@ func TestTokenStream_TokString_InvalidStrings(t *testing.T) {
 }
 
 func TestTokenStream_TokString_EdgeCases(t *testing.T) {
-	tests := []struct {
-		input    string
-		expected string
-	}{
-		{`" "`, " "},
-		{`"special chars !@#$%^&*"`, `special chars !@#$%^&*`},
-		{`"123"`, "123"},
-		{`"true"`, "true"},
+	tests := []string{
+		`" "`,
+		`"special chars !@#$%^&*"`,
+		`"123"`,
+		`"true"`,
 	}
-	for _, test := range tests {
-		r := strings.NewReader(test.input)
+	for _, input := range tests {
+		r := strings.NewReader(input)
 		ts := newTokenStream(r)
 		tok, err := ts.next()
 		assert.NoError(t, err)
