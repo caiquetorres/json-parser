@@ -2,6 +2,7 @@ package jsonparser
 
 import (
 	"bufio"
+	"encoding/hex"
 	"errors"
 	"io"
 	"unicode"
@@ -136,7 +137,25 @@ func (t *tokenStream) tokString() (token, error) {
 		if ch == '\\' {
 			t.nextByte() // '\'
 			ch, err := t.peekByte()
-			if err != nil || !isEscapingChar(ch) {
+			if err != nil {
+				return token{}, errBad
+			}
+			if ch == 'u' {
+				t.nextByte() // 'u'
+				var h []byte
+				for range 4 {
+					ch, err := t.nextByte()
+					if err != nil {
+						return token{}, errBad
+					}
+					h = append(h, ch)
+				}
+				_, err := hex.DecodeString(string(h))
+				if err != nil {
+					return token{}, errBad
+				}
+			}
+			if !isEscapingChar(ch) {
 				return token{}, errBad
 			}
 		}
