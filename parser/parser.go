@@ -10,11 +10,23 @@ func Parse(r io.Reader) error {
 	}
 	switch tok.k {
 	case LeftBracket:
-		return parseObj(ps)
+		err := parseObj(ps)
+		if err != nil {
+			return err
+		}
 	case LeftBrace:
-		return parseArr(ps)
+		err := parseArr(ps)
+		if err != nil {
+			return err
+		}
+	default:
+		return errUnexpectedTok
 	}
-	return errUnexpectedTok
+	_, err = ps.peek()
+	if err == nil {
+		return errUnexpectedTok
+	}
+	return nil
 }
 
 func parseExpr(ps *parseStream) error {

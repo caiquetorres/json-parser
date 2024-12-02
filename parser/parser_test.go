@@ -78,3 +78,10 @@ func TestParse_WhitespaceOnly(t *testing.T) {
 	err := Parse(reader)
 	assert.Error(t, err, "Parse() did not fail for whitespace-only input")
 }
+
+func TestParse_SingleExpression(t *testing.T) {
+	json := `{}{}`
+	reader := strings.NewReader(json)
+	err := Parse(reader)
+	assert.Error(t, err, "Parse() failed for complex JSON")
+}
