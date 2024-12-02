@@ -102,10 +102,7 @@ func (t *tokenStream) tokKeyword(firstCh byte) (token, error) {
 	identifier := string(firstCh)
 	for {
 		ch, err := t.peekByte()
-		if err != nil {
-			return token{}, err
-		}
-		if !unicode.IsLetter(rune(ch)) {
+		if err != nil || !unicode.IsLetter(rune(ch)) {
 			break
 		}
 		identifier += string(ch)
@@ -143,8 +140,9 @@ func (t *tokenStream) tokString() (token, error) {
 		}
 		t.nextByte()
 	}
-	ch, err := t.nextByte()
-	if err != nil || ch != '"' {
+	_, err := t.nextByte()
+	// Reached this point means that the current character is a double quote (")
+	if err != nil {
 		return token{}, errBad
 	}
 	return t.newToken(String), nil
