@@ -8,7 +8,7 @@ To build and run the tool, use the following commands:
 # Build the project
 make build
 ```
-<!--
+
 ## Test
 
 To run tests for the tool, use the following command:
@@ -16,4 +16,4 @@ To run tests for the tool, use the following command:
 ```sh
 # Run tests
 make test
-``` -->
+```

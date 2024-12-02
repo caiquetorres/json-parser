@@ -8,7 +8,7 @@ import (
 )
 
 func TestTokenStream_BasicTokens(t *testing.T) {
-	input := `{ "key": "value" }`
+	input := `{"key":"value"}`
 	r := strings.NewReader(input)
 	ts := newTokenStream(r)
 

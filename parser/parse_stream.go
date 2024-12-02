@@ -1,6 +1,9 @@
 package jsonparser
 
-import "errors"
+import (
+	"errors"
+	"io"
+)
 
 var errUnexpectedTok = errors.New("unexpected token")
 
@@ -8,8 +11,10 @@ type parseStream struct {
 	ts *tokenStream
 }
 
-func newParseStream() *parseStream {
-	return &parseStream{}
+func newParseStream(r io.Reader) *parseStream {
+	return &parseStream{
+		ts: newTokenStream(r),
+	}
 }
 
 func (p *parseStream) peek() (token, error) {
