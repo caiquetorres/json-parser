@@ -181,9 +181,9 @@ func (t *tokenStream) tokNumber(firstCh byte) (token, error) {
 	if ch == '0' {
 		ch, err := t.peekByte()
 		if err != nil {
-			return token{}, errBad
+			return t.newToken(Number), nil
 		}
-		if ch != '.' {
+		if unicode.IsNumber(rune(ch)) {
 			return token{}, errBad
 		}
 	}

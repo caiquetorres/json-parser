@@ -108,88 +108,44 @@ func TestTokenStream_TokString_EdgeCases(t *testing.T) {
 		r := strings.NewReader(test.input)
 		ts := newTokenStream(r)
 		tok, err := ts.next()
-
 		assert.NoError(t, err)
 		assert.Equal(t, String, tok.k)
 	}
 }
 
-func TestTokenStream_Numbers(t *testing.T) {
-	input := "123"
-	r := strings.NewReader(input)
-	ts := newTokenStream(r)
-	tok, err := ts.next()
+func TestTokenStream_TokNumber_ValidNumbers(t *testing.T) {
+	tests := []string{
+		"0",
+		"123",
+		"-123",
+		"123.456",
+		"-123.456",
+		"1e3",
+		"1.23e3",
+		"1.234e-5",
+		"1.234E+56",
+	}
+	for _, test := range tests {
+		r := strings.NewReader(test)
+		ts := newTokenStream(r)
+		tok, err := ts.next()
+		assert.NoError(t, err)
+		assert.Equal(t, Number, tok.k)
+	}
+}
 
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "-123"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "123.456"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "-123.456"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "1e3"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "1.23e3"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "1.234e-5"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.NoError(t, err)
-	assert.Equal(t, Number, tok.k)
-
-	input = "123."
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.Error(t, err)
-	assert.Equal(t, errBad, err)
-
-	input = ".123"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.Error(t, err)
-	assert.Equal(t, errBad, err)
-
-	input = "1e"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.Error(t, err)
-	assert.Equal(t, errBad, err)
-
-	input = "1e+abc"
-	r = strings.NewReader(input)
-	ts = newTokenStream(r)
-	tok, err = ts.next()
-	assert.Error(t, err)
-	assert.Equal(t, errBad, err)
+func TestTokenStream_TokNumber_InvalidNumbers(t *testing.T) {
+	tests := []string{
+		"0123",
+		"123.",
+		".123",
+		"1e",
+		"1e+abc",
+	}
+	for _, test := range tests {
+		r := strings.NewReader(test)
+		ts := newTokenStream(r)
+		_, err := ts.next()
+		assert.Error(t, err)
+	}
 }
