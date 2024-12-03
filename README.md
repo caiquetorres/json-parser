@@ -1,4 +1,5 @@
 # JSON Parser
+This repository provides a solution for [Coding Challenge #02](https://codingchallenges.fyi/challenges/challenge-json-parser), which involves creating a JSON parser.
 
 ## Build and Run
 
@@ -10,11 +11,10 @@ make build
 ```
 
 ```sh
-# Run
+# Parsing files
 ./bin/json_parser file1.json file2.json file3.json
 
-# or
-
+# Parsing from stdin
 cat file.json | ./bin/json_parser
 ```
 
