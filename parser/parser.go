@@ -1,6 +1,8 @@
 package jsonparser
 
-import "io"
+import (
+	"io"
+)
 
 func Parse(r io.Reader) error {
 	ps := newParseStream(r)
@@ -39,8 +41,17 @@ func parseExpr(ps *parseStream) error {
 		return parseObj(ps)
 	case LeftBrace:
 		return parseArr(ps)
+	case Number:
+		ps.next()
+	case String:
+		ps.next()
+	case Bool:
+		ps.next()
+	case Null:
+		ps.next()
+	default:
+		return errUnexpectedTok
 	}
-	ps.next()
 	return nil
 }
 
