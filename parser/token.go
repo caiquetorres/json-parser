@@ -22,7 +22,7 @@ const (
 	String
 )
 
-func (k tokenKind) String() string {
+func (k tokenKind) string() string {
 	switch k {
 	case LeftBracket:
 		return "left bracket"
@@ -55,7 +55,7 @@ type token struct {
 }
 
 func (t *token) string() string {
-	return fmt.Sprintf("token { k: %s, span: { s: %v, l: %v } }", t.k.String(), t.s.s, t.s.l)
+	return fmt.Sprintf("token { k: %s, span: { s: %v, l: %v } }", t.k.string(), t.s.s, t.s.l)
 }
 
 func (t *token) textContent(r io.ReadSeeker) (string, error) {
